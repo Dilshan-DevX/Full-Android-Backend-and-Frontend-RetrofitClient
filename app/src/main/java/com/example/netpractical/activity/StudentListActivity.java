@@ -1,6 +1,8 @@
 package com.example.netpractical.activity;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import com.example.netpractical.api.StudentApi;
 import com.example.netpractical.client.RetrofitClient;
 import com.example.netpractical.dto.StudentDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -26,6 +29,8 @@ import retrofit2.Retrofit;
 public class StudentListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private List<StudentDTO> studentDTOS;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,7 @@ public class StudentListActivity extends AppCompatActivity {
 
         this.recyclerView = findViewById(R.id.RecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        loadAllStudent();
 
     }
     private void loadAllStudent(){
@@ -44,10 +50,11 @@ public class StudentListActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<StudentDTO>> call, Response<List<StudentDTO>> response) {
                 if (response.isSuccessful()){
-                    List<StudentDTO> studentDTOS = response.body();
+                   studentDTOS = response.body();
                     if (studentDTOS != null && !studentDTOS.isEmpty()){
                         StudentAdapter studentAdapter = new StudentAdapter(studentDTOS);
                         recyclerView.setAdapter(studentAdapter);
+                        setDataForSerchBar();
                     }
                 }
             }
@@ -57,5 +64,18 @@ public class StudentListActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+    private void setDataForSerchBar(){
+        AutoCompleteTextView autoCompleteTextView = findViewById(R.id.searchInput);
+        if (studentDTOS != null && !studentDTOS.isEmpty()){
+            List<String> names = new ArrayList<>();
+            for (StudentDTO dto : studentDTOS){
+             names.add(dto.getName());
+            }
+//            String[] namesArray = names.toArray(new String[0]);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,names);
+            autoCompleteTextView.setAdapter(adapter);
+        }
+
     }
 }

@@ -34,7 +34,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         StudentDTO studentDTO = list.get(position);
         holder.studentName.setText(studentDTO.getName());
-        holder.studentAge.setText(studentDTO.getAge());
+        holder.studentAge.setText(String.valueOf(studentDTO.getAge()));
         holder.studentCourse.setText(studentDTO.getCourse());
     }
 
